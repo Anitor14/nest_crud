@@ -51,8 +51,7 @@ export class AuthService {
     //if password incorrect throw exception.
     if (!pwMatches) throw new ForbiddenException('Credentials incorrect');
 
-    // send back the user
-    delete user.hash;
+    // send the token created from the jwt.
     return this.signToken(user.id, user.email);
   }
 
@@ -65,13 +64,16 @@ export class AuthService {
       email,
     };
 
+    //getting the secret from the env.
     const secret = this.config.get('JWT_SECRET');
 
+    // this is where the token is created using the payload and the secret
     const token = await this.jwt.signAsync(payload, {
       expiresIn: '15m',
       secret: secret,
     });
 
+    // we return the token , when the function has been called.
     return {
       access_token: token,
     };
